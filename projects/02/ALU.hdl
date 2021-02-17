@@ -42,5 +42,21 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    Not16(in=x, out=notx);
+    // only need to negate x, then feed into Mux4Way
+    // x can be modified in 1 of 4 ways:
+    // no modifications (a), zero'ed, i.e. all false (b)
+    // only negated (c), zero'ed then negated i.e. all true (d)
+    Mux4Way16(a=x, b[0..15]=false, c=notx, d[0..15]=true, sel[0]=zx, sel[1]=nx, 
+        out=transformedX);
+    
+    Not16(in=y, out=noty);
+    Mux4Way16(a=y, b[0..15]=false, c=noty, d[0..15]=true, sel[0]=zy, sel[1]=ny, 
+        out=transformedY);
+
+    Add16(a=transformedX, b=transformedY, out=xPlusy);
+    And16(a=transformedX, b=transformedY, out=xAndy);
+    Not16(in=xPlusy, out=notxPlusy);
+    Not16(in=xAndy, out=notxAndy);
+    Mux4Way16(a=xAndy, b=xPlusy, c=notxAndy, d=notxPlusy, sel[0]=f, sel[1]=no, out=out);
 }
