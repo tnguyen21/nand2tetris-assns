@@ -47,16 +47,28 @@ CHIP ALU {
     // x can be modified in 1 of 4 ways:
     // no modifications (a), zero'ed, i.e. all false (b)
     // only negated (c), zero'ed then negated i.e. all true (d)
-    Mux4Way16(a=x, b[0..15]=false, c=notx, d[0..15]=true, sel[0]=zx, sel[1]=nx, 
+    Mux4Way16(a=x, b=false, c=notx, d=true, sel[0]=zx, sel[1]=nx, 
         out=transformedX);
-    
     Not16(in=y, out=noty);
-    Mux4Way16(a=y, b[0..15]=false, c=noty, d[0..15]=true, sel[0]=zy, sel[1]=ny, 
+    Mux4Way16(a=y, b=false, c=noty, d=true, sel[0]=zy, sel[1]=ny, 
         out=transformedY);
 
     Add16(a=transformedX, b=transformedY, out=xPlusy);
     And16(a=transformedX, b=transformedY, out=xAndy);
     Not16(in=xPlusy, out=notxPlusy);
     Not16(in=xAndy, out=notxAndy);
-    Mux4Way16(a=xAndy, b=xPlusy, c=notxAndy, d=notxPlusy, sel[0]=f, sel[1]=no, out=out);
+    Mux4Way16(a=xAndy, b=xPlusy, c=notxAndy, d=notxPlusy, 
+        sel[0]=f, sel[1]=no, out[0..14]=resultLsb, out[15]=resultMsb);
+
+    Not16(in[0..14]=resultLsb, in[15]=resultMsb, 
+        out=notResult);
+    And16(a[0..14]=resultLsb, a[15]=resultMsb, b=true, 
+        out[0..7]=resultZrLsb, out[8..15]=resultZrMsb);
+    Or8Way(in=resultZrLsb, out=resultNotZeroLsb);
+    Or8Way(in=resultZrMsb, out=resultNotZeroMsb);
+    Or(a=resultNotZeroLsb, b=resultNotZeroMsb, out=notZr);
+    Not(in=notZr, out=zr);
+
+    And(a=resultMsb, b=true, out=ng); // if left most bit is positive, then the result is neg
+    Not16(in=notResult, out=out); // double negated result
 }
