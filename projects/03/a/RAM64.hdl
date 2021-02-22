@@ -15,5 +15,70 @@ CHIP RAM64 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    DMux8Way(in=load, 
+        sel[0]=address[3], 
+        sel[1]=address[4], 
+        sel[2]=address[5], 
+        a=load0, 
+        b=load1, 
+        c=load2, 
+        d=load3, 
+        e=load4, 
+        f=load5, 
+        g=load6, 
+        h=load7);
+
+    RAM8(in=in, load=load0, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register0);
+    RAM8(in=in, load=load1, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register1);
+    RAM8(in=in, load=load2, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register2);
+    RAM8(in=in, load=load3, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register3);
+    RAM8(in=in, load=load4, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register4);
+    RAM8(in=in, load=load5, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register5);
+    RAM8(in=in, load=load6, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register6);
+    RAM8(in=in, load=load7, 
+        address[0]=address[0], 
+        address[1]=address[1], 
+        address[2]=address[2],
+        out=register7);
+    
+    Mux8Way16(a=register0, 
+        b=register1, 
+        c=register2, 
+        d=register3, 
+        e=register4, 
+        f=register5, 
+        g=register6, 
+        h=register7, 
+        sel[0]=address[3], 
+        sel[1]=address[4], 
+        sel[2]=address[5], 
+        out=out);
 }
