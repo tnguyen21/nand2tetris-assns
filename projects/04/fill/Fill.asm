@@ -12,3 +12,25 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+(MAIN)
+@KBD
+D=M
+// if we see input on kbd memory map, fill the screen black
+@FILLBLACK
+D;JNE
+// otherwise we fill the screen white
+@FILLWHITE
+0;JMP
+
+(FILLBLACK)
+@SCREEN
+M=-1
+@MAIN
+0;JMP
+
+(FILLWHITE)
+@SCREEN
+M=0
+@MAIN
+0;JMP
