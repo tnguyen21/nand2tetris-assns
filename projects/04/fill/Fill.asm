@@ -25,7 +25,7 @@ D;JEQ
 
 (FILLBLACK)
 // screen memory map is 32 words x 256 rows = 8192 words long
-// we want to fill each word with wither 0 or -1
+// we want to fill each word with either 0 or -1
 // init variables
 @8192
 D=A
