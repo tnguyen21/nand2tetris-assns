@@ -16,21 +16,77 @@
 (MAIN)
 @KBD
 D=M
-// if we see input on kbd memory map, fill the screen black
-@FILLBLACK
-D;JNE
-// otherwise we fill the screen white
+// if we see no input on kbd memory map, fill the screen white
 @FILLWHITE
+D;JEQ
+// otherwise we fill the screen black
+@FILLBLACK
 0;JMP
 
 (FILLBLACK)
+// screen memory map is 32 words x 256 rows = 8192 words long
+// we want to fill each word with wither 0 or -1
+// init variables
+@8192
+D=A
+@i
+M=D
 @SCREEN
+D=A
+// pointer ! 
+@address
+M=D
+(LOOP_FILL_B)
+// loop termination when i < 0
+@i
+D=M
+@LOOP_FILL_B_END
+D;JLT
+// loop body
+@address
+A=M
 M=-1
+@i
+M=M-1
+@address
+M=M+1
+@LOOP_FILL_B
+0;JMP
+(LOOP_FILL_B_END)
+@KBD
+D=M
 @MAIN
 0;JMP
 
 (FILLWHITE)
+// init variables
+@8192
+D=A
+@i
+M=D
 @SCREEN
+D=A
+@address
+M=D
+
+(LOOP_FILL_W)
+// check if loop terminates
+@i
+D=M
+@LOOP_FILL_W_END
+D;JLT
+// loop body
+@address
+A=M
 M=0
+@i
+M=M-1
+@address
+M=M+1
+@LOOP_FILL_W
+0;JMP
+(LOOP_FILL_W_END)
+@KBD
+D=M
 @MAIN
 0;JMP
