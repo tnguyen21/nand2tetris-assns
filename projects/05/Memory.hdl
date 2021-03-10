@@ -27,5 +27,18 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // must compute load bit separately
+    // cannot pass in load from input
+    // if we do, then we load screen when we load ram, and vice versa
+    // should only load 1 or the other
+    Not(in=address[14], out=notaddr14);
+    And(a=load, b=notaddr14, out=loadram);
+    And(a=load, b=address[14], out=loadscrn);
+
+    RAM16K(in=in, load=loadram, address=address[0..13], out=RamOut);
+    Screen(in=in, load=loadscrn, address=address[0..12], out=ScrnOut);
+    Keyboard(out=KbdOut);
+    Mux4Way16(a=RamOut, b=RamOut, c=ScrnOut, d=KbdOut, 
+        sel=address[13..14], out=out);
+
 }
